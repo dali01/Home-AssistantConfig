@@ -1,0 +1,10 @@
+projector_off:
+  sequence:
+    - service: switch.turn_off
+      data:
+        entity_id: switch.projector
+    - delay:
+        milliseconds: 500
+    - service: switch.turn_off
+      data:
+        entity_id: switch.projector

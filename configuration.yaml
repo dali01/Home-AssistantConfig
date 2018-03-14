@@ -1,0 +1,376 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Lindmark
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret lat
+  longitude: !secret lon
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 193
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Stockholm
+
+  customize: !include customize.yaml
+  customize_glob: !include customize_glob.yaml
+
+  packages: !include_dir_named packages
+
+# Show links to resources in log and frontend
+introduction:
+
+# Enables the frontend
+frontend:
+  javascript_version: latest
+
+# Enables configuration UI
+config:
+
+customizer:
+  custom_ui: hosted
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret http_password
+  # Uncomment this if you are using SSL or running in Docker etc
+  # base_url: example.duckdns.org:8123
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+# Weather Prediction
+sensor:
+  - platform: yr
+  - platform: rflink
+    automatic_add: true
+  - platform: rest
+    resource: http://ip.jsontest.com
+    name: External IP
+    value_template: '{{ value_json.ip }}'
+  - platform: glances
+    host: !secret fileserver_host
+    name: filserver
+    resources:
+      - 'disk_use_percent'
+      - 'disk_use'
+      - 'disk_free'
+      - 'memory_use_percent'
+      - 'memory_use'
+      - 'memory_free'
+      - 'swap_use_percent'
+      - 'swap_use'
+      - 'swap_free'
+      - 'processor_load'
+      - 'process_running'
+      - 'process_total'
+      - 'process_thread'
+      - 'process_sleeping'
+      - 'cpu_temp'
+  - platform: rest
+    resource: !secret fileserver_rest
+    name: filserver_download
+    value_template: '{{value_json.fs[1].percent}}'
+    unit_of_measurement: '%'
+  - platform: rest
+    resource: !secret fileserver_rest
+    name: filserver_download_free
+    value_template: '{{value_json.fs[1].free|filesizeformat}}'
+  - platform: attributes
+    attribute: battery_level
+    unit_of_measurement: "%"
+    entities:
+#      - climate.guestroom_trv_820
+#      - climate.master_bedroom_trv_812
+#      - climate.meja_trv_811
+#      - climate.milo_trv_830
+#      - climate.toilet_thermostat_733
+#      - climate.zoe_trv_841
+#      - sensor.kitchen_controller_7
+#      - sensor.oregontemphygro_2d72_bat
+#      - sensor.rfx_hum_th129186_722
+      - switch.toilet_pir_853
+      - zwave.kitchen
+      - zwave.laundryroom_thermostat
+      - zwave.bath_thermostat
+      - climate.toilet_thermostat_733
+
+
+
+mqtt:
+  broker: !secret mqtt_broker
+  port: 1883
+  client_id: home-assistant-1
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+
+binary_sensor:
+  - platform: template
+    sensors:
+      filserver_full:
+        value_template: "{{ states.sensor.filserver_download.state > '98' }}"
+        friendly_name: 'Fileserver full'
+      smokesensor_hallway:
+        value_template: "{{ states.light.smokesensor_hallway.state == 'on' }}"
+
+input_boolean:
+  garage_keep_open:
+    name: Keep garage door open
+    initial: off
+    icon: mdi:garage
+
+
+# Text to speech
+tts:
+  platform: google
+
+group: !include groups.yaml
+
+media_player:
+  - platform: plex
+
+zwave:
+  usb_path: /dev/ttyACM0
+  device_config:
+    sensor.washingmachine_power:
+      polling_intensity: 1
+#  config_path: /srv/homeassistant/homeassistant_venv/lib/python3.4/site-packages/libopenzwave-0.3.3-py3.4-linux-armv7l.egg/config
+
+rflink:
+  port: /dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0
+
+device_tracker:
+
+volvooncall:
+  username: !secret voc_user
+  password: !secret voc_password
+  name:
+    cyd806: 'Bilen'
+  resources:
+    - position
+    - heater
+    - odometer
+    - fuel_amount
+    - fuel_amount_level
+    - washer_fluid_level
+    - brake_fluid
+    - service_warning_status
+    - bulb_failures
+#    - heater
+#    - position
+
+
+zone:
+  name: !secret zone_name
+  latitude: !secret zone_latitude
+  longitude: !secret zone_longitude
+  icon: mdi:worker
+  radius: 200
+
+zone 2:
+  name: !secret zone2_name
+  latitude: !secret zone2_latitude
+  longitude: !secret zone2_longitude
+  icon: mdi:city
+  radius: 4000
+
+ffmpeg:
+  ffmpeg_bin: /usr/bin/avconv
+
+camera:
+  - platform: foscam
+    ip: !secret camera1_ip
+    port: !secret camera1_port
+    username: !secret camera1_username
+    password: !secret camera1_password
+    name: Outside
+  - platform: ffmpeg
+    input: !secret camera2_input
+    name: kitchen
+  - platform: generic
+    name: Daniel
+    still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.daniels_iphone.attributes.latitude }},{{ states.device_tracker.daniels_iphone.attributes.longitude }}&zoom=13&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:D%7C{{ states.device_tracker.daniels_iphone.attributes.latitude }},{{ states.device_tracker.daniels_iphone.attributes.longitude }}
+    limit_refetch_to_url_change: true
+  - platform: generic
+    name: Bilen
+    still_image_url: https://maps.googleapis.com/maps/api/staticmap?center={{ states.device_tracker.volvo_bilen.attributes.latitude }},{{ states.device_tracker.volvo_bilen.attributes.longitude }}&zoom=13&size=500x500&maptype=roadmap&markers=color:blue%7Clabel:B%7C{{ states.device_tracker.volvo_bilen.attributes.latitude }},{{ states.device_tracker.volvo_bilen.attributes.longitude }}
+    limit_refetch_to_url_change: true
+
+vera:
+  vera_controller_url: !secret vera_controller_url
+
+notify:
+  - name: pushbullet_daniel
+    platform: pushbullet
+    api_key: !secret pushbullet_api_key
+  - name: daniels_iphone
+    platform: group
+    services:
+      - service: ios_daniels_iphone
+
+ios:
+  push:
+    categories:
+      - name: garage_door
+        identifier: 'GARAGE_DOOR'
+        actions:
+          - identifier: 'GARAGE_DOOR_LEAVE_OPEN'
+            title: 'Leave open'
+            activationMode: 'background'
+            authenticationRequired: no
+            behavior: 'default'
+          - identifier: 'GARAGE_DOOR_CLOSE'
+            title: 'Close now'
+            activationMode: 'background'
+            authenticationRequired: no
+            behavior: 'default'
+
+envisalink:
+  host: !secret envisalink_host
+  panel_type: DSC
+  user_name: !secret envisalink_user_name
+  password: !secret envisalink_password
+  code: !secret envisalink_code
+  port: !secret envisalink_port
+  evl_version: 3
+  keepalive_interval: 60
+  zonedump_interval: 30
+  panic_type: Police
+  zones:
+    1:
+      name: 'Garageport'
+      type: 'opening'
+    2:
+      name: 'Altandörrar'
+      type: 'opening'
+    3:
+      name: 'Hall'
+      type: 'motion'
+    4:
+      name: 'Kök'
+      type: 'motion'
+    5:
+      name: 'Källare'
+      type: 'motion'
+    6:
+      name: 'Garage'
+      type: 'motion'
+    7:
+      name: 'Ytterdörr'
+      type: 'opening'
+    8:
+      name: 'Garagedörr'
+      type: 'opening'
+  partitions:
+    1:
+      name: 'Home Alarm'
+
+light:
+  platform: rflink
+  automatic_add: true
+  devices:
+    tristate_88a694_3:
+      name: Projektorduk Upp
+      signal_repetitions: 4
+    tristate_88a691_3:
+      name: Projektorduk Stopp
+      signal_repetitions: 4
+    tristate_88a690_10:
+      name: Projektorduk Ner
+      signal_repetitions: 4
+    fa20rf_69e582_01:
+      name: Smokesensor Hallway
+    newkaku_00001b58_3:
+      name: Entrance Outside Light
+
+
+switch:
+  - platform: rflink
+    device_defaults:
+      fire_event: true
+      signal_repetitions: 3
+    devices:
+      newkaku_00001b58_1:
+        name: Guestroom window
+  - platform: broadlink
+    type: rm_mini
+    host: !secret broadlink_host
+    mac: !secret broadlink_host
+    switches:
+      projector:
+        command_on: 'JgBgAAABKJIUEBQ1FBEUEBQ1FDYUEBQRFDUUEBQ2FDUUEBQRFDUUNRQRFDUUEBQRFBAUERQQFBEUNRQRFDUUNRQ1FDUUNRQ1FAAFHQABKEgUAAxBAAEoSBQADEIAASdIFAANBQAAAAAAAAAA'
+        command_off: 'JgB4AAABJ5ITERM2FBETEhM2EzYTERMSEzYTEhM2EzYTEhISEzYTNhMSEzYTNhM2ExITNhMRExITNhMSExETEhM2ExITNhI3EwAFHQABJ0gTAAxDAAEnSBMADEMAASdJEwAMQgABJ0kTAAxDAAEnSBMADEMAASdJEwANBQ=='
+
+
+cover:
+  - platform: template
+    covers:
+      garage_door:
+        friendly_name: 'Garage Door'
+        value_template: "{% if states.binary_sensor.garageport %}{% if states.binary_sensor.garageport.state == 'on'%}open{% else %}closed{% endif %}{% endif %}"
+        open_cover:
+          service: alarm_control_panel.envisalink_alarm_keypress
+          entity_id: alarm_control_panel.home_alarm
+          data:
+            keypress: '*71'
+        close_cover:
+          service: alarm_control_panel.envisalink_alarm_keypress
+          entity_id: alarm_control_panel.home_alarm
+          data:
+            keypress: '*71'
+        stop_cover:
+          service: alarm_control_panel.envisalink_alarm_keypress
+          entity_id: alarm_control_panel.home_alarm
+          data:
+            keypress: '*71'
+        icon_template: "{% if states.binary_sensor.garageport %}{% if states.binary_sensor.garageport.state == 'on'%}mdi:garage-open{% else %}mdi:garage{% endif %}{% endif %}"
+  - platform: rflink
+    device_defaults:
+      fire_event: true
+      signal_repetitions: 1
+    devices:
+      rts_0f0f0f_01:
+        name: Milos markis
+
+automation: !include automations.yaml
+alert: !include alerts.yaml
+scene: !include scenes.yaml
+script: !include scripts.yaml
+
+logger:
+  default: error
+#  logs:
+#    homeassistant.components.volvooncall: debug
+#    homeassistant.components.*.volvooncall: debug
+#    volvooncall: debug
+#    rflink: debug
+#    homeassistant.components.rflink: debug
+
+recorder:
+  purge_interval: 1
+  purge_keep_days: 5
+  exclude:
+    domains:
+      - group
+      - binary_sensor
+
+panel_iframe:
+  nodered:
+    title: 'Node-RED'
+    icon: 'mdi:clipboard-flow'
+    url: !secret nodered_url
+

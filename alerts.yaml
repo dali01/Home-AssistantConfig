@@ -1,0 +1,6 @@
+filserver_full:
+  name: Fileserver full
+  entity_id: binary_sensor.filserver_full
+  repeat: 30
+  notifiers:
+    - daniels_iphone

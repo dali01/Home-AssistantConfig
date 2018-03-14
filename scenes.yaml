@@ -1,0 +1,8 @@
+- name: Night lights On
+  entities:
+    switch.toilet_bulb_switch: on
+    switch.guestroom_window: on
+- name: Night lights Off
+  entities:
+    switch.toilet_bulb_switch: off
+    switch.guestroom_window: off

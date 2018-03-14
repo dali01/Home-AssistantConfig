@@ -1,0 +1,227 @@
+lights:
+  view: yes
+  icon: mdi:lightbulb
+  name: Lights
+  entities:
+    - group.lights_toilet
+    - group.lights_kitchen
+
+lights kitchen:
+  name: Lights kitchen
+  entities:
+    - light.kitchen_counter_17
+    - light.kitchen_table_5
+
+lights toilet:
+  name: Lights toilet
+  entities:
+    - switch.toilet_bulb_switch
+
+car:
+  name: Car
+  view: yes
+  icon: mdi:car-estate
+  entities:
+    - group.car_service
+    - group.car_fuel
+    - group.tracking_car
+    - group.car_control
+
+car service:
+  name: Car Service Status
+  entities:
+    - binary_sensor.bilen_brake_fluid
+    - binary_sensor.bilen_bulbs
+    - binary_sensor.bilen_service
+    - binary_sensor.bilen_washer_fluid
+
+car fuel:
+  name: Car Fuel & Odo
+  entities:
+    - sensor.bilen_fuel_level
+    - sensor.bilen_fuel_amount
+    - sensor.bilen_odometer
+
+car control:
+  name: Car Control
+  entities:
+    - switch.bilen_heater
+
+tracking:
+  name: Tracking
+  view: yes
+  icon: mdi:crosshairs-gps
+  entities:
+    - group.tracking_family
+    - group.tracking_car
+    - camera.daniel
+    - camera.bilen
+
+tracking car:
+  name: Car Tracking
+  entities:
+    - device_tracker.volvo_bilen
+
+tracking family:
+  name: Family Tracking
+  entities:
+    - device_tracker.daniels_iphone
+    - device_tracker.helenesiphone
+    - device_tracker.milosiphone
+
+cameras:
+  name: Cameras
+  view: yes
+  icon: mdi:camera
+  entities:
+    - camera.outside
+    - camera.kitchen
+
+alarm kitchen:
+  entities:
+    - binary_sensor.kok
+    - binary_sensor.altandorrar
+
+alarm hallway:
+  entities:
+    - binary_sensor.hall
+    - binary_sensor.ytterdorr
+
+alarm garage:
+  entities:
+    - binary_sensor.garage
+    - binary_sensor.garagedorr
+    - binary_sensor.garageport
+
+alarm basement:
+  entities:
+    - binary_sensor.kallare
+
+alarm toilet:
+  entities:
+    - binary_sensor.toilet_motion_sensor_855
+
+alarm smoke:
+  entities:
+    - binary_sensor.smokesensor_hallway
+    - binary_sensor.rfx_smoke_kd1ss69e_742
+    - binary_sensor.rfx_smoke_kd1ss77e_748
+    - binary_sensor.rfx_smoke_kd1ssba5_745
+    - binary_sensor.rfx_smoke_kd1sse7b_739
+
+alarm panel:
+  entities:
+    - sensor.home_alarm_keypad
+    - alarm_control_panel.home_alarm
+
+alarm:
+  view: yes
+  icon: mdi:alarm-light
+  entities:
+    - group.alarm_panel
+    - group.alarm_kitchen
+    - group.alarm_hallway
+    - group.alarm_garage
+    - group.alarm_basement
+    - group.alarm_toilet
+    - group.alarm_smoke
+
+climate outside:
+  name: Outside
+  entities:
+    - sensor.oregontemphygro_2dae_temp
+    - sensor.oregontemphygro_2dae_hum
+    - sensor.oregontemphygro_2dae_hstatus
+    - sensor.oregontemphygro_2dae_bat
+climate environment:
+  name: Environment
+  entities:
+    - sun.sun
+    - sensor.yr_symbol
+
+climate pool:
+  name: Pool
+  entities:
+    - sensor.wt0122_0032_temp
+
+climate thermostat:
+  entities:
+    - climate.guestroom_trv_820
+    - climate.kitchen_heating_1
+    - climate.master_bedroom_trv_812
+    - climate.meja_trv_811
+    - climate.milo_trv_830
+    - climate.toilet_thermostat_733
+    - climate.zoe_trv_841
+    - climate.bath_thermostat_heating_1
+    - climate.laundryroom_thermostat_heating_1
+
+climate actuator:
+  entities:
+    - switch.bath_floorheat_switch
+    - switch.laundry_floorheat_switch
+    - climate.toilet_floor_relay_734
+
+climate:
+  view: yes
+  icon: mdi:thermometer-lines
+  entities:
+    - group.climate_outside
+    - group.climate_pool
+    - group.climate_environment
+    - group.climate_thermostat
+    - group.climate_actuator
+
+network general:
+  entities:
+    - sensor.external_ip
+
+network filserver:
+  entities:
+    - sensor.filserver_disk_free
+    - sensor.filserver_download
+    - sensor.filserver_download_free
+
+network:
+  view: yes
+  icon: mdi:server
+  entities:
+    - group.network_general
+    - group.network_filserver
+
+garage:
+  view: yes
+  icon: mdi:garage-open
+  entities:
+    - group.garage_lights_doors
+    - group.alarm_garage
+
+garage_lights_doors:
+  control: hidden
+  name: Lights & sensors
+  entities:
+    - switch.garage_ceiling_switch
+    - cover.garage_door
+
+battery:
+  view: yes
+  icon: mdi:battery
+  entities:
+    - group.battery_card
+
+battery_card:
+  name: Battery status
+  entities:
+    - sensor.toilet_pir_853_battery_level
+    - sensor.kitchen_battery_level
+    - sensor.laundryroom_thermostat_battery_level
+    - sensor.bath_thermostat_battery_level
+    - sensor.kitchen_battery_level
+    - sensor.toilet_thermostat_733
+
+laundry:
+  view: yes
+  icon: mdi:washing-machine
+  entities:
+    - group.washing_machine
+

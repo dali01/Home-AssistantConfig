@@ -1,0 +1,118 @@
+- id: close_garage
+  alias: Close garage when open for 40 minutes
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.garageport
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: '40'
+  condition:
+    condition: state
+    entity_id: input_boolean.garage_keep_open
+    state: 'off'
+  action:
+  - service: alarm_control_panel.envisalink_alarm_keypress
+    entity_id: alarm_control_panel.home_alarm
+    data:
+      keypress: '*71'
+  - service: homeassistant.turn_off
+    entity_id: input_boolean.garage_keep_open
+- id: garage_open_15min
+  alias: Garage open
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.garageport
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: '15'
+  action:
+    service: notify.daniels_iphone
+    data:
+      message: Garage left open
+      data:
+        push:
+          category: GARAGE_DOOR
+- id: ios_garage_close
+  alias: iOS action close garage
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: GARAGE_DOOR_CLOSE
+  action:
+    service: alarm_control_panel.envisalink_alarm_keypress
+    entity_id: alarm_control_panel.home_alarm
+    data:
+      keypress: '*71'
+- id: ios_garage_leave_open
+  alias: iOS action leave garage open
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: GARAGE_DOOR_LEAVE_OPEN
+  action:
+    service: homeassistant.turn_on
+    entity_id: input_boolean.garage_keep_open
+- action:
+  - data:
+      entity_id: scene.night_lights_on
+    service: scene.turn_on
+  alias: Lights on 1h before sunset
+  condition: []
+  id: '1507045148879'
+  trigger:
+  - event: sunset
+    offset: -01:00:00
+    platform: sun
+- action:
+  - data:
+      entity_id: scene.night_lights_off
+    service: scene.turn_on
+  alias: Lights off 30min after sunrise
+  condition: []
+  id: '1507045522646'
+  trigger:
+  - event: sunrise
+    offset: 00:30:00
+    platform: sun
+- action:
+  - data:
+      entity_id: scene.night_lights_off
+    service: scene.turn_on
+  alias: Night lights of at 23:00
+  condition:
+  - after: sunset
+    condition: sun
+  id: '1507126387934'
+  trigger:
+  - at: '23:00:00'
+    platform: time
+- action:
+  - data:
+      entity_id: scene.night_lights_on
+    service: scene.turn_on
+  alias: Night lights on at 06:00
+  condition:
+  - before: sunrise
+    condition: sun
+  id: '1507126560107'
+  trigger:
+  - at: 06:00:00
+    platform: time
+- id: garage_lights_3h
+  alias: Garage lights on for 3h
+  trigger:
+  - platform: state
+    entity_id: switch.garage_ceiling_switch
+    from: 'off'
+    to: 'on'
+    for:
+      hours: '3'
+  action:
+    service: switch.turn_off
+    entity_id: switch.garage_ceiling_switch

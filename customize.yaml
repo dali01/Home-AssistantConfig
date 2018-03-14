@@ -1,0 +1,64 @@
+device_tracker.volvo_cyd806:
+  icon: mdi:car
+  homebridge_visible: true
+sensor.oregontemphygro_2d72_temp:
+  friendly_name: Outside temp
+  homebridge_visible: true
+sensor.oregontemphygro_2d72_hum:
+  friendly_name: Outside humidity
+sensor.oregontemphygro_2d72_bat:
+  friendly_name: Outside battery
+sensor.oregontemphygro_2d72_hstatus:
+  friendly_name: Outside weather
+sensor.wt0122_0032_temp:
+  friendly_name: Pool temp
+  homebridge_visible: true
+binary_sensor.smokesensor_hallway:
+  device_class: smoke
+alarm_control_panel.home_alarm:
+  homebridge_visible: true
+binary_sensor.altandorrar:
+  homebridge_visible: true
+binary_sensor.garage:
+  homebridge_visible: true
+binary_sensor.garagedorr:
+  homebridge_visible: true
+binary_sensor.garageport:
+  homebridge_visible: true
+binary_sensor.hall:
+  homebridge_visible: true
+binary_sensor.kallare:
+  homebridge_visible: true
+binary_sensor.kok:
+  homebridge_visible: true
+binary_sensor.ytterdorr:
+  homebridge_visible: true
+cover.garage_door:
+  homebridge_visible: true
+  homebridge_cover_type: garage_door
+device_tracker.daniels_iphone:
+  homebridge_visible: true
+light.hallway_ceiling_6:
+  homebridge_visible: true
+light.kitchen_counter_17:
+  homebridge_visible: true
+light.kitchen_table_5:
+  homebridge_visible: true
+light.mb_window_lamp_723:
+  homebridge_visible: true
+light.meja_window_light_14:
+  homebridge_visible: true
+light.milo_ceiling_11:
+  homebridge_visible: true
+light.zoe_ceiling_12:
+  homebridge_visible: true
+switch.guestroom_window:
+  homebridge_visible: true
+switch.toilet_bulb_switch:
+  homebridge_visible: true
+switch.garage_ceiling_switch:
+  homebridge_visible: true
+  friendly_name: Garage ceiling light
+cover.milos_markis:
+  homebridge_visible: true
+  homebridge_cover_type: rollershutter
