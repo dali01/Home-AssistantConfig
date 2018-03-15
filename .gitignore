@@ -2,7 +2,7 @@
 !*.yaml
 !*.xml
 !scenes
-!packages
+!packages/**
 !custom_components
 !.gitignore
 secrets.yaml
